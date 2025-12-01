@@ -28,6 +28,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'acquisition_node = acquisition.acquisition_node:main',
         ],
     },
 )

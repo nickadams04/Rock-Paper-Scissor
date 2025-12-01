@@ -22,3 +22,5 @@ uint8 DEFEAT=1
 uint8 TIE=2
 
 uint8 round_result
+
+int32 global_idx
