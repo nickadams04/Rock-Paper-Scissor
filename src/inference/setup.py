@@ -29,6 +29,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'inference_node = inference.inference_node:main',
         ],
     },
 )
