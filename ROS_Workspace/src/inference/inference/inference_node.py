@@ -1,6 +1,8 @@
+import os
 import time
 import rclpy
 from rclpy.node import Node
+from ament_index_python.packages import get_package_share_directory
 from custom_msgs.msg import AcquisitionMsg, GestureMsg
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
@@ -21,9 +23,11 @@ class InferenceNode(Node):
     def __init__(self):
         super().__init__('inference_node')
        
-        self.model_path = '/home/nicka/Projects/Rock-Paper-Scissor/src/inference/models/hand_landmarker.task'
-       
-       # bridge for ROS Image <-> OpenCV conversions
+        share_dir = get_package_share_directory('inference')
+        self.model_path = os.path.join(share_dir, '../../../../', 'src/inference/models/hand_landmarker.task')
+        self.get_logger().info(self.model_path)
+        
+        # bridge for ROS Image <-> OpenCV conversions
         self.bridge = CvBridge()
         
         # try to load the MediaPipe hand landmarker model

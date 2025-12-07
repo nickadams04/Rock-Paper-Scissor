@@ -30,7 +30,7 @@ setup(
     entry_points={
         'console_scripts': [
             
-            'visualization_node = visualization.visualization_node:main',
+            'visualization = visualization.visualization_node:main',
         ],
     },
 )
