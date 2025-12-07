@@ -69,6 +69,17 @@ class VisualizationNode(Node):
                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2)
         except Exception as e:
             self.get_logger().warn(f'Failed to draw bbox: {e}')
+            
+        # Draw prediction
+        if getattr(gesture, 'detected', False):
+            gesture_idx = getattr(gesture, 'player_gesture', 3)
+            gesture_text = [
+                'Rock', 'Paper', 'Scissors', 'Unknown'
+            ][gesture_idx]
+            confidence = getattr(gesture, 'confidence', 0.0)
+            text = f'{gesture_text}: {confidence:.2f}'
+            cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 
+                        1, (0, 255, 0), 2, cv2.LINE_AA)
 
         # Store and publish annotated image
         self.latest_annotated = frame
