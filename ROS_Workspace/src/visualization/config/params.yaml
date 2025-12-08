@@ -1,0 +1,4 @@
+visualization_node:
+  ros__parameters:
+    show_window: true
+    # draw_scores: true

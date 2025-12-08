@@ -7,9 +7,12 @@ import cv2
 
 
 class VisualizationNode(Node):
+    def parameters(self):
+        self.declare_parameter('show_window', True)
+        self.show_window =bool( self.get_parameter('show_window'))
     def __init__(self):
         super().__init__('visualization_node')
-
+        self.parameters()
         self.bridge = CvBridge()
         self.latest_frame = None
         self.latest_gesture = None
@@ -28,7 +31,8 @@ class VisualizationNode(Node):
 
         # UI timer to refresh imshow window ~30 FPS
         self.ui_timer = self.create_timer(1/30.0, self.display_callback)
-        cv2.namedWindow('Annotated', cv2.WINDOW_NORMAL)
+        if self.show_window:
+            cv2.namedWindow('Annotated', cv2.WINDOW_NORMAL)
 
     def acq_callback(self, msg: AcquisitionMsg):
         # Convert ROS Image to OpenCV BGR
@@ -91,6 +95,8 @@ class VisualizationNode(Node):
 
     def display_callback(self):
         # Show the latest annotated frame; fall back to raw
+        if not self.show_window: 
+            return
         frame = self.latest_annotated if self.latest_annotated is not None else self.latest_frame
         if frame is None:
             return
@@ -100,6 +106,7 @@ class VisualizationNode(Node):
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 self.get_logger().info('Closing visualization window.')
                 cv2.destroyAllWindows()
+                self.show_window = False
         except Exception as e:
             self.get_logger().warn(f'Failed to imshow: {e}')
 

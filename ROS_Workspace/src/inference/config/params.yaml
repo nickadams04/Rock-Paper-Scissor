@@ -1,0 +1,5 @@
+inference_node:
+  ros__parameters:
+    detection_model: "hand_landmarker.task"
+    classification_model: "hand_gesture_model.keras"
+    min_confidence: 0.6

@@ -1,0 +1,4 @@
+acquisition_node:
+  ros__parameters:
+    device_index: 0
+    frame_rate: 30

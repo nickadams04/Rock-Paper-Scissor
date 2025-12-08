@@ -1,0 +1,4 @@
+game_sim_node:
+  ros__parameters:
+    opponent_mode: "random"  # random | biased
+    biased_win_rate: 0.65

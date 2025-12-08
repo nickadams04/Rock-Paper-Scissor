@@ -23,13 +23,24 @@ import numpy as np
 
 
 class InferenceNode(Node):
+    def parameters(self):
+        self.declare_parameter('detection_model', 'hand_landmarker.task')
+        self.declare_parameter('classification_model', 'hand_gesture_model.keras')
+        self.declare_parameter('min_confidence', 0.6)
+        
+        self.detection_model_name = self.get_parameter('detection_model').value
+        self.classification_model_name = self.get_parameter('classification_model').value
+        self.min_confidence = float(self.get_parameter('min_confidence').value)
+        
+        
     def __init__(self):
         super().__init__('inference_node')
+        self.parameters()
        
         share_dir = get_package_share_directory('inference')
         models_path = os.path.join(share_dir, '../../../..', 'src/inference/models/')
-        self.detection_model_path = os.path.join(models_path, 'hand_landmarker.task')
-        self.classification_model_path = os.path.join(models_path, 'hand_gesture_model.keras')
+        self.detection_model_path = os.path.join(models_path, self.detection_model_name)
+        self.classification_model_path = os.path.join(models_path, self.classification_model_name)
         self.get_logger().info(os.path.abspath(self.classification_model_path))
         
         # bridge for ROS Image <-> OpenCV conversions
@@ -133,7 +144,7 @@ class InferenceNode(Node):
             #     self.get_logger().info(f'Hand {idx}: {len(hand_landmarks)} landmarks detected')
             #     self.get_logger().info(f'L0: {hand_landmarks[0].x}')
         else:
-            self.get_logger().info('No hands detected')
+            # self.get_logger().info('No hands detected')
             out = GestureMsg()
             out.detected = False
             self.publisher.publish(out)
@@ -142,7 +153,7 @@ class InferenceNode(Node):
         hand_landmarks = results.hand_landmarks[0]
         
         if len(hand_landmarks)==0:
-            self.get_logger().info('No keypoints detected')
+            # self.get_logger().info('No keypoints detected')
             out = GestureMsg()
             out.detected = False
             self.publisher.publish(out)
@@ -209,16 +220,16 @@ class InferenceNode(Node):
             predicted_class = np.argmax(prediction[0])
             confidence = np.max(prediction[0])
             
-            # threshold = 0.85
-            # if confidence < threshold:
-            #     predicted_class = 3
+            threshold = 0.85
+            if confidence < self.min_confidence:
+                predicted_class = 3
             
             # Map class index to gesture name
             # gesture_names = ['rock', 'paper', 'scissors']
             # gesture = gesture_names[predicted_class] if predicted_class < len(gesture_names) else 'unknown'
             
             # self.get_logger().info(f'Predicted gesture: {gesture} (confidence: {confidence:.2f})')
-            self.get_logger().info(f'Sum is {np.sum(prediction[0])}')
+            # self.get_logger().info(f'Sum is {np.sum(prediction[0])}')
             # out_msg.player_gesture = predicted_class if predicted_class in [0, 1, 2] else 255
             # ensure a native Python int (np.int64 would fail PyLong_Check in ROS2 conversion)
             pc = int(predicted_class)

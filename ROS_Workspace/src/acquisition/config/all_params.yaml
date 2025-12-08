@@ -1,0 +1,20 @@
+acquisition_node:
+  ros__parameters:
+    device_index: 0
+    frame_rate: 100.0
+
+inference_node:
+  ros__parameters:
+    detection_model: "hand_landmarker.task"
+    classification_model: "hand_gesture_model.keras"
+    min_confidence: 0.6
+
+game_sim_node:
+  ros__parameters:
+    opponent_mode: "random"  # random | biased
+    biased_win_rate: 0.65
+
+visualization_node:
+  ros__parameters:
+    show_window: true
+    # draw_scores: true

@@ -1,0 +1,1 @@
+sudo chmod a+rw /dev/video0 /dev/video1

@@ -10,7 +10,9 @@ setup(
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         # install launch files
-        ('share/' + package_name + '/launch', ['launch/all.launch.py']),
+        ('share/' + package_name + '/launch', ['launch/all.launch.py', 'launch/acquisition.launch.py']),
+        # install config files
+        ('share/' + package_name + '/config', ['config/params.yaml', 'config/all_params.yaml']),
     ],
     install_requires=[
         'setuptools',

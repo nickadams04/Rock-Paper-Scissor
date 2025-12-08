@@ -6,15 +6,23 @@ from cv_bridge import CvBridge
 import cv2
 
 class AcquisitionNode(Node):
+    def parameters(self):
+        self.declare_parameter('device_index', 0)
+        self.declare_parameter('frame_rate', 30.0)
+        
+        self.device_index = int(self.get_parameter('device_index').value)
+        self.frame_rate = float(self.get_parameter('frame_rate').value)
     def __init__(self):
         super().__init__('acquisition_node')
+        
+        self.parameters()
         # self.get_logger().info("Entering Callback")
         # publish the custom message type (AcquisitionMsg) on /image_raw
         self.publisher = self.create_publisher(AcquisitionMsg, '/image_raw', 10)
         self.bridge = CvBridge()
         # self.get_logger().info("Entering Callback")
         # Webcam capture from cv2
-        self.cap = cv2.VideoCapture("/dev/video0", cv2.CAP_V4L2)
+        self.cap = cv2.VideoCapture(f"/dev/video{self.device_index}", cv2.CAP_V4L2)
 
         # Force MJPEG
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
@@ -22,7 +30,7 @@ class AcquisitionNode(Node):
         # Reasonable resolution & FPS
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        self.cap.set(cv2.CAP_PROP_FPS, 30)
+        self.cap.set(cv2.CAP_PROP_FPS, self.frame_rate)
 
 
         
@@ -33,7 +41,7 @@ class AcquisitionNode(Node):
             raise RuntimeError("Could not open webcam")
         # self.get_logger().info("Entering Callback")
         # Publish at ~30Hz
-        self.timer = self.create_timer(1/30.0, self.timer_callback)
+        self.timer = self.create_timer(1/self.frame_rate, self.timer_callback)
 
     def timer_callback(self):
         # self.get_logger().info("Entering Callback")
