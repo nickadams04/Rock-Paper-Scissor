@@ -1,0 +1,6 @@
+rclpy
+sensor_msgs
+cv_bridge
+opencv-python
+mediapipe
+numpy

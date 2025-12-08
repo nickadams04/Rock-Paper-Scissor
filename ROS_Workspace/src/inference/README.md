@@ -1,11 +1,13 @@
-# Inference
+# Inference Module
 
-Determines player move from raw image.
+Status: Complete
 
-## TODO
-- [ ] Add installation instructions
-- [ ] Add usage instructions
-- [ ] Add node descriptions
-- [ ] Add topic descriptions
-- [ ] Add parameter descriptions
-- [ ] Add examples
+- Consumes `AcquisitionMsg`/`/image_raw`, runs Mediapipe Hands for landmarks.
+- Classifies gesture into `Rock | Paper | Scissors | Unknown` with confidence.
+- Publishes `GestureMsg` on `/gesture` including bbox and landmark arrays.
+
+Run:
+```
+source ../../install/setup.bash
+ros2 run inference inference_node
+```

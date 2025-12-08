@@ -1,11 +1,19 @@
-# Visualization
+# Visualization Module
 
-Annotates the image with all necessary features.
+Status: Basic features implemented; awaiting game-sim integration
 
-## TODO
-- [ ] Add installation instructions
-- [ ] Add usage instructions
-- [ ] Add node descriptions
-- [ ] Add topic descriptions
-- [ ] Add parameter descriptions
-- [ ] Add examples
+Implemented:
+- Overlays hand landmarks and bounding box from `GestureMsg`.
+- Displays gesture label and confidence.
+- Publishes annotated frames on `/image_annotated`.
+- Live preview via OpenCV window.
+
+Pending (from `game_sim`):
+- Game state and score overlay.
+- Round flow indicators and timer display.
+
+Run:
+```
+source ../../install/setup.bash
+ros2 run visualization visualization_node
+```
