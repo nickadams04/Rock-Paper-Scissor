@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from std_msgs.msg import Empty
 from custom_msgs.msg import AcquisitionMsg, GestureMsg
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
@@ -28,6 +29,7 @@ class VisualizationNode(Node):
 
         # Publisher for annotated image
         self.publisher_annotated = self.create_publisher(Image, '/image_annotated', 10)
+        self.publisher_trigger_play = self.create_publisher(Empty, '/trigger_play', 10)
 
         # UI timer to refresh imshow window ~30 FPS
         self.ui_timer = self.create_timer(1/30.0, self.display_callback)
@@ -84,6 +86,12 @@ class VisualizationNode(Node):
             text = f'{gesture_text}: {confidence:.2f}'
             cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 
                         1, (0, 255, 0), 2, cv2.LINE_AA)
+            
+            inf_time = getattr(gesture, 'inference_time', 0.0)
+            inf_time = int(inf_time * 1e3)
+            text = f'Inf. Time: {inf_time}ms'
+            cv2.putText(frame, text, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 
+                        .75, (0, 255, 0), 2, cv2.LINE_AA)
 
         # Store and publish annotated image
         self.latest_annotated = frame
@@ -103,10 +111,13 @@ class VisualizationNode(Node):
         try:
             cv2.imshow('Annotated', frame)
             # waitKey must be called to update window; 1 ms is enough
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
                 self.get_logger().info('Closing visualization window.')
                 cv2.destroyAllWindows()
                 self.show_window = False
+            elif key == ord(' '):
+                self.get_logger().info('Play')
         except Exception as e:
             self.get_logger().warn(f'Failed to imshow: {e}')
 

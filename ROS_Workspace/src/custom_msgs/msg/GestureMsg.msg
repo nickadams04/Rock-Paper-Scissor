@@ -15,4 +15,6 @@ int32 y_max
 int32[] landmarks_x
 int32[] landmarks_y
 
+float32 inference_time
+
 int32 global_idx
